@@ -76,8 +76,8 @@ class _SetAlarmState extends State<SetAlarm> {
                     Text(
                       'Name',
                       style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
+                        color: Colors.white,
+                        fontSize: 20.0,
                       ),
                     ),
                     SizedBox(height: 10),
@@ -92,6 +92,114 @@ class _SetAlarmState extends State<SetAlarm> {
                         hintStyle: TextStyle(color: Colors.white),
                       ),
                       style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 30),
+                    Text(
+                      'Video',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(Size(150, 60)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                            ),
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  // Color when the button is pressed
+                                  return Color(0xFF006DDA);
+                                }
+                                // Color for the default and other states
+                                return Color(0xFF1393DB);
+                              },
+                            ),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Record',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(Size(150, 60)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                            ),
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  // Color when the button is pressed
+                                  return Color(0xFF006DDA);
+                                }
+                                // Color for the default and other states
+                                return Color(0xFF1393DB);
+                              },
+                            ),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 80),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Create Alarm',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      style: ButtonStyle(
+                        fixedSize: MaterialStateProperty.all(Size(400, 60)),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                        ),
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed)) {
+                              // Color when the button is pressed
+                              return Color(0xFF006DDA);
+                            }
+                            // Color for the default and other states
+                            return Color(0xFF1393DB);
+                          },
+                        ),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                      ),
                     ),
                   ],
                 ),

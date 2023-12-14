@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meraalarm/videoPreviewPage.dart';
-import 'package:get/get.dart';
+// import 'package:meraalarm/videoPreviewPage.dart';
+// import 'package:get/get.dart';
 
 class SetAlarm extends StatefulWidget {
   const SetAlarm({Key? key}) : super(key: key);
@@ -16,6 +16,8 @@ class SetAlarm extends StatefulWidget {
 class _SetAlarmState extends State<SetAlarm> {
   TimeOfDay _selectedTime = TimeOfDay.now(); // Variable to store selected time
   String _name = ''; // Variable to store the selected alarm name
+  File? videoSelected;
+  String videoPath = '';
 
   // Function to show time picker and update the selected time
   Future<void> _selectTime(BuildContext context) async {
@@ -37,14 +39,154 @@ class _SetAlarmState extends State<SetAlarm> {
 
     if (videoFile != null){
       //Video preview screen
-      Get.to(
-        VideoPreview(
-          videoFile: File(videoFile.path),
-          videoPath: videoFile.path,
-        ),
-      );
+      videoSelected = File(videoFile.path);
+      videoPath = videoFile.path;
+
+
+      // Get.to(
+      //   VideoPreview(
+      //     videoFile: File(videoFile.path),
+      //     videoPath: videoFile.path,
+      //   ),
+      // );
     }
 
+  }
+
+  Widget buildVideoUploadSection() {
+    if (videoPath == '') {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              getVideoFile(ImageSource.gallery);
+            },
+            child: Text(
+              'Upload',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all(Size(150, 60)),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.pressed)) {
+                    // Color when the button is pressed
+                    return Color(0xFF006DDA);
+                  }
+                  // Color for the default and other states
+                  return Color(0xFF1393DB);
+                },
+              ),
+              foregroundColor: MaterialStateProperty.all(Colors.white),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              getVideoFile(ImageSource.camera);
+            },
+            child: Text(
+              'Record',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all(Size(150, 60)),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.pressed)) {
+                    // Color when the button is pressed
+                    return Color(0xFF006DDA);
+                  }
+                  // Color for the default and other states
+                  return Color(0xFF1393DB);
+                },
+              ),
+              foregroundColor: MaterialStateProperty.all(Colors.white),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                'Video:',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                '...${videoPath.length !=0 ? videoPath.substring(videoPath.length - 10) : videoPath}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // Clear video selection
+                  setState(() {
+                    videoSelected = null;
+                    videoPath = '';
+                  });
+                },
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ButtonStyle(
+                  fixedSize: MaterialStateProperty.all(Size(100, 40)),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.pressed)) {
+                        // Color when the button is pressed
+                        return Color(0xFF006DDA);
+                      }
+                      // Color for the default and other states
+                      return Color(0xFF1393DB);
+                    },
+                  ),
+                  foregroundColor: MaterialStateProperty.all(Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
   }
 
   @override
@@ -123,77 +265,7 @@ class _SetAlarmState extends State<SetAlarm> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            getVideoFile(ImageSource.gallery);
-                          },
-                          child: Text(
-                            'Upload',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(Size(150, 60)),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                            ),
-                            backgroundColor:
-                                MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.pressed)) {
-                                  // Color when the button is pressed
-                                  return Color(0xFF006DDA);
-                                }
-                                // Color for the default and other states
-                                return Color(0xFF1393DB);
-                              },
-                            ),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            getVideoFile(ImageSource.camera);
-                          },
-                          child: Text(
-                            'Record',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(Size(150, 60)),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                            ),
-                            backgroundColor:
-                                MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.pressed)) {
-                                  // Color when the button is pressed
-                                  return Color(0xFF006DDA);
-                                }
-                                // Color for the default and other states
-                                return Color(0xFF1393DB);
-                              },
-                            ),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
+                    buildVideoUploadSection(),
                     SizedBox(height: 80),
                     ElevatedButton(
                       onPressed: () {},

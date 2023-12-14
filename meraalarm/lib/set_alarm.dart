@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:meraalarm/videoPreviewPage.dart';
+import 'package:get/get.dart';
 
 class SetAlarm extends StatefulWidget {
   const SetAlarm({Key? key}) : super(key: key);
@@ -24,6 +29,22 @@ class _SetAlarmState extends State<SetAlarm> {
         _selectedTime = picked;
       });
     }
+  }
+
+  // Function to get videoFile
+  Future<void> getVideoFile(ImageSource sourceImg) async {
+    final videoFile = await ImagePicker().pickVideo(source: sourceImg);
+
+    if (videoFile != null){
+      //Video preview screen
+      Get.to(
+        VideoPreview(
+          videoFile: File(videoFile.path),
+          videoPath: videoFile.path,
+        ),
+      );
+    }
+
   }
 
   @override
@@ -106,7 +127,9 @@ class _SetAlarmState extends State<SetAlarm> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            getVideoFile(ImageSource.gallery);
+                          },
                           child: Text(
                             'Upload',
                             style: TextStyle(
@@ -137,7 +160,9 @@ class _SetAlarmState extends State<SetAlarm> {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            getVideoFile(ImageSource.camera);
+                          },
                           child: Text(
                             'Record',
                             style: TextStyle(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 // import 'package:meraalarm/videoPreviewPage.dart';
 // import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SetAlarm extends StatefulWidget {
   const SetAlarm({Key? key}) : super(key: key);
@@ -18,6 +19,25 @@ class _SetAlarmState extends State<SetAlarm> {
   String _name = ''; // Variable to store the selected alarm name
   File? videoSelected;
   String videoPath = '';
+
+  // Save alarm details
+  Future<void> _saveAlarm(TimeOfDay time, File? videoFile, String videoPath,
+      String alarmName) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      prefs.setString('alarm_time', time.format(context));
+      if (videoFile != null) {
+        prefs.setString('alarm_video_path', videoPath);
+      }
+      prefs.setString('alarm_name', alarmName);
+
+      print('Alarm created: $alarmName at $time with video $videoPath');
+    } catch (e) {
+      print('Error saving alarm: $e');
+      // Handle the error, show a message to the user, or log it for debugging
+    }
+  }
 
   // Function to show time picker and update the selected time
   Future<void> _selectTime(BuildContext context) async {
@@ -37,11 +57,10 @@ class _SetAlarmState extends State<SetAlarm> {
   Future<void> getVideoFile(ImageSource sourceImg) async {
     final videoFile = await ImagePicker().pickVideo(source: sourceImg);
 
-    if (videoFile != null){
+    if (videoFile != null) {
       //Video preview screen
       videoSelected = File(videoFile.path);
       videoPath = videoFile.path;
-
 
       // Get.to(
       //   VideoPreview(
@@ -50,7 +69,6 @@ class _SetAlarmState extends State<SetAlarm> {
       //   ),
       // );
     }
-
   }
 
   Widget buildVideoUploadSection() {
@@ -70,7 +88,7 @@ class _SetAlarmState extends State<SetAlarm> {
                 ),
               ),
               Text(
-                '...${videoPath.length !=0 ? videoPath.substring(videoPath.length - 10) : videoPath}',
+                '...${videoPath.length != 0 ? videoPath.substring(videoPath.length - 10) : videoPath}',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
@@ -100,7 +118,7 @@ class _SetAlarmState extends State<SetAlarm> {
                     ),
                   ),
                   backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
+                    (Set<MaterialState> states) {
                       if (states.contains(MaterialState.pressed)) {
                         // Color when the button is pressed
                         return Color(0xFF006DDA);
@@ -162,7 +180,6 @@ class _SetAlarmState extends State<SetAlarm> {
                   fontSize: 20.0,
                 ),
               ),
-              SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Column(
@@ -199,8 +216,9 @@ class _SetAlarmState extends State<SetAlarm> {
                                 borderRadius: BorderRadius.circular(50.0),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                  (Set<MaterialState> states) {
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
                                 if (states.contains(MaterialState.pressed)) {
                                   // Color when the button is pressed
                                   return Color(0xFF006DDA);
@@ -209,7 +227,8 @@ class _SetAlarmState extends State<SetAlarm> {
                                 return Color(0xFF1393DB);
                               },
                             ),
-                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
                           ),
                         ),
                         ElevatedButton(
@@ -231,8 +250,9 @@ class _SetAlarmState extends State<SetAlarm> {
                                 borderRadius: BorderRadius.circular(50.0),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                  (Set<MaterialState> states) {
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
                                 if (states.contains(MaterialState.pressed)) {
                                   // Color when the button is pressed
                                   return Color(0xFF006DDA);
@@ -241,7 +261,8 @@ class _SetAlarmState extends State<SetAlarm> {
                                 return Color(0xFF1393DB);
                               },
                             ),
-                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
                           ),
                         ),
                       ],
@@ -268,9 +289,38 @@ class _SetAlarmState extends State<SetAlarm> {
                       ),
                       style: TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 50),
+                    SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Save selected time
+                        TimeOfDay _savedTime = _selectedTime;
+
+                        // Save video information if selected
+                        File? _savedVideoFile;
+                        String _savedVideoPath = '';
+
+                        if (videoSelected != null) {
+                          _savedVideoFile = videoSelected;
+                          _savedVideoPath = videoPath;
+                        }
+
+                        // Save alarm name
+                        String _savedAlarmName = _name;
+
+                        // Store the alarm information (e.g., using local storage)
+                        _saveAlarm(_savedTime, _savedVideoFile, _savedVideoPath,
+                            _savedAlarmName);
+
+                        // Clear any selections for next use
+                        setState(() {
+                          _selectedTime = TimeOfDay.now();
+                          videoSelected = null;
+                          videoPath = '';
+                          _name = '';
+                        });
+
+                        // Show success message or navigate to another screen
+                      },
                       child: Text(
                         'Create Alarm',
                         style: TextStyle(

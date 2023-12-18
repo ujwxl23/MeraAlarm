@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:meraalarm/videoPreviewPage.dart';
-// import 'package:get/get.dart';
+import 'package:meraalarm/alarm_isolate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:isolate';
 
 class SetAlarm extends StatefulWidget {
   const SetAlarm({Key? key}) : super(key: key);
@@ -29,6 +29,25 @@ class _SetAlarmState extends State<SetAlarm> {
       prefs.setString('alarm_time', time.format(context));
       if (videoFile != null) {
         prefs.setString('alarm_video_path', videoPath);
+        final receivePort = ReceivePort();
+        final sendPort = await receivePort.first;
+
+        Isolate.spawn(scheduleAlarm, [sendPort, context, time, videoPath]);
+
+        // Listen for messages from the isolate
+        receivePort.listen((message) {
+          if (message == "Alarm triggered!") {
+            // Close ports here
+            receivePort.close();
+            sendPort.close();
+
+            // Handle alarm trigger logic
+            // ...
+          } else if (message is String && message.startsWith("Error: ")) {
+            // Handle error message from isolate
+            print(message);
+          }
+        });
       }
       prefs.setString('alarm_name', alarmName);
 
@@ -61,13 +80,6 @@ class _SetAlarmState extends State<SetAlarm> {
       //Video preview screen
       videoSelected = File(videoFile.path);
       videoPath = videoFile.path;
-
-      // Get.to(
-      //   VideoPreview(
-      //     videoFile: File(videoFile.path),
-      //     videoPath: videoFile.path,
-      //   ),
-      // );
     }
   }
 
